@@ -625,17 +625,17 @@
           <% cartItems.forEach(item => { %>
             <div class="summary-item">
               <div class="item-img">
-                <% if (item.product_image) { %>
-                  <img src="<%= item.product_image %>" alt="<%= item.product_name %>" />
+                <% if (item.item_image) { %>
+                  <img src="<%= item.item_image %>" alt="<%= item.item_name %>" />
                 <% } else { %>
                   🐾
                 <% } %>
               </div>
               <div class="item-details">
-                <div class="item-name"><%= item.product_name %></div>
+                <div class="item-name"><%= item.item_name %></div>
                 <div class="item-meta">Qty: <%= item.quantity %></div>
               </div>
-              <div class="item-price">₱<%= (item.product_price * item.quantity).toFixed(2) %></div>
+              <div class="item-price">₱<%= (item.item_price * item.quantity).toFixed(2) %></div>
             </div>
           <% }); %>
         </div>

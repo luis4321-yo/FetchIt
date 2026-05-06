@@ -42,7 +42,7 @@
     <div class="modal-icon">🔒</div>
     <h2 class="modal-title">Sign In Required</h2>
     <p class="modal-body">
-      You must sign in first to buy.<br>
+      You must sign in first to avail a service.<br>
       <a href="/signup">Don't have an account? Sign up here.</a>
     </p>
     <div class="modal-actions">
@@ -52,39 +52,40 @@
   </div>
 </div>
 
-<!-- PRODUCTS -->
+<!-- SERVICES -->
 <section id="products">
   <div class="container">
     <h1><%= pageTitle %></h1>
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search products..." />
+      <input type="text" id="searchInput" placeholder="Search services..." />
     </div>
     <div class="filters">
-      <button class="filter-btn <%= currentCategory === 'all' ? 'active' : '' %>" onclick="filterCategory('all')">All</button>
-      <button class="filter-btn <%= currentCategory === 'Food' ? 'active' : '' %>" onclick="filterCategory('food')">Food</button>
-      <button class="filter-btn <%= currentCategory === 'Toys' ? 'active' : '' %>" onclick="filterCategory('toys')">Toys</button>
-      <button class="filter-btn <%= currentCategory === 'Accessories' ? 'active' : '' %>" onclick="filterCategory('accessories')">Accessories</button>
-      <button class="filter-btn <%= currentCategory === 'Hygiene' ? 'active' : '' %>" onclick="filterCategory('hygiene')">Hygiene</button>
-      <button class="filter-btn <%= currentCategory === 'Medicine' ? 'active' : '' %>" onclick="filterCategory('medicine')">Medicine</button>
+      <button class="filter-btn <%= currentType === 'all' ? 'active' : '' %>" onclick="filterType('all')">All</button>
+      <button class="filter-btn <%= currentType === 'bathing' ? 'active' : '' %>" onclick="filterType('bathing')">Bathing</button>
+      <button class="filter-btn <%= currentType === 'brushing' ? 'active' : '' %>" onclick="filterType('brushing')">Brushing</button>
+      <button class="filter-btn <%= currentType === 'nail trimming' ? 'active' : '' %>" onclick="filterType('nail trimming')">Nail Trimming</button>
+      <button class="filter-btn <%= currentType === 'ear cleaning' ? 'active' : '' %>" onclick="filterType('ear cleaning')">Ear Cleaning</button>
+      <button class="filter-btn <%= currentType === 'haircuts' ? 'active' : '' %>" onclick="filterType('haircuts')">Haircuts</button>
     </div>
     <div class="products-grid">
-      <% products.forEach(product => { %>
+      <% services.forEach(service => { %>
         <div class="product-card">
           <div class="product-img">
-            <% if (product.image_url) { %>
-              <img src="<%= product.image_url %>" alt="<%= product.name %>" />
+            <% if (service.image_url) { %>
+              <img src="<%= service.image_url %>" alt="<%= service.service_name %>" />
             <% } else { %>
               <div class="placeholder">🐾</div>
             <% } %>
           </div>
           <div class="product-body">
-            <h3 class="product-name"><%= product.name %></h3>
-            <p class="product-desc"><%= product.description %></p>
+            <h3 class="product-name"><%= service.service_name %></h3>
+            <p class="product-desc"><strong>By:</strong> <%= service.person_name %></p>
+            <p class="product-desc"><strong>Type:</strong> <%= service.service_type %></p>
             <div class="product-footer">
-              <div class="product-price">$<%= product.price %></div>
+              <div class="product-price">₱<%= service.price %></div>
               <div class="product-actions">
-                <button class="btn btn-view" onclick="viewProduct(<%= product.product_id %>)">View</button>
-                <button class="btn btn-cart" onclick="addToCart(<%= product.product_id %>, 1)">Add to Cart</button>
+                <button class="btn btn-view" onclick="viewService(<%= service.service_id %>)">View</button>
+                <button class="btn btn-cart" onclick="addToCart(<%= service.service_id %>, 1)">Add to Cart</button>
               </div>
             </div>
           </div>
@@ -113,15 +114,15 @@
     });
   });
 
-  function viewProduct(productId) {
-    window.location.href = '/products/' + productId;
+  function viewService(serviceId) {
+    window.location.href = '/services/' + serviceId;
   }
 
-  function filterCategory(category) {
-    if (category === 'all') {
-      window.location.href = '/products';
+  function filterType(type) {
+    if (type === 'all') {
+      window.location.href = '/services';
     } else {
-      window.location.href = '/products?category=' + category;
+      window.location.href = '/services?type=' + encodeURIComponent(type);
     }
   }
 

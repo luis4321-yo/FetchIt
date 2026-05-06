@@ -9,6 +9,10 @@ router.get('/products', shopController.getAllProducts);
 
 router.get('/products/:id', shopController.getProductDetails);
 
+router.get('/services', shopController.getAllServices);
+
+router.get('/services/:id', shopController.getServiceDetails);
+
 // Cart API routes
 router.get('/cart', shopController.getCart);
 router.post('/cart/add', shopController.addToCart);
