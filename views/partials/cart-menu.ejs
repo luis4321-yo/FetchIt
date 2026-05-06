@@ -313,31 +313,37 @@ function updateCartUI(data) {
     cartBadge.style.display = 'none';
   }
   
-  // Update cart items HTML
-  if (data.items && data.items.length > 0) {
-    let itemsHTML = '';
-    data.items.forEach(item => {
-      itemsHTML += `
-        <div class="cart-item" data-product-id="${item.product_id}" data-version="${item.version}">
-          <div class="cart-item-image">
-            ${item.product_image 
-              ? `<img src="${item.product_image}" alt="${item.product_name}" />`
-              : '<div class="cart-item-placeholder">🐾</div>'
-            }
-          </div>
-          <div class="cart-item-details">
-            <h4 class="cart-item-name">${item.product_name}</h4>
-            <p class="cart-item-price">₱${item.product_price}</p>
-            <div class="cart-item-quantity">
-              <button class="qty-btn qty-minus" data-action="decrease" data-product-id="${item.product_id}" data-quantity="${item.quantity}" data-version="${item.version}">−</button>
-              <span class="qty-value">${item.quantity}</span>
-              <button class="qty-btn qty-plus" data-action="increase" data-product-id="${item.product_id}" data-quantity="${item.quantity}" data-version="${item.version}">+</button>
+// Update cart items HTML
+    if (data.items && data.items.length > 0) {
+      let itemsHTML = '';
+      data.items.forEach(item => {
+        const itemId = item.product_id || item.service_id;
+        const itemType = item.item_type || (item.product_id ? 'product' : 'service');
+        const itemName = item.item_name || item.product_name;
+        const itemPrice = item.item_price || item.product_price;
+        const itemImage = item.item_image || item.product_image;
+        
+        itemsHTML += `
+          <div class="cart-item" data-item-id="${itemId}" data-item-type="${itemType}" data-version="${item.version}">
+            <div class="cart-item-image">
+              ${itemImage 
+                ? `<img src="${itemImage}" alt="${itemName}" />`
+                : '<div class="cart-item-placeholder">🐾</div>'
+              }
             </div>
+            <div class="cart-item-details">
+              <h4 class="cart-item-name">${itemName}</h4>
+              <p class="cart-item-price">₱${itemPrice}</p>
+              <div class="cart-item-quantity">
+                <button class="qty-btn qty-minus" data-action="decrease" data-item-id="${itemId}" data-item-type="${itemType}" data-quantity="${item.quantity}" data-version="${item.version}">−</button>
+                <span class="qty-value">${item.quantity}</span>
+                <button class="qty-btn qty-plus" data-action="increase" data-item-id="${itemId}" data-item-type="${itemType}" data-quantity="${item.quantity}" data-version="${item.version}">+</button>
+              </div>
+            </div>
+            <button class="cart-item-remove" data-action="remove" data-item-id="${itemId}" data-item-type="${itemType}">×</button>
           </div>
-          <button class="cart-item-remove" data-action="remove" data-product-id="${item.product_id}">×</button>
-        </div>
-      `;
-    });
+        `;
+      });
     cartItems.innerHTML = itemsHTML;
     cartFooter.style.display = 'block';
     
@@ -356,7 +362,7 @@ function updateCartUI(data) {
 }
 
 // Add item to cart
-async function addToCart(productId, quantity) {
+async function addToCart(itemId, quantity, itemType = 'product') {
   // Gate: require login before adding to cart
   if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
     if (typeof openSigninModal === 'function') openSigninModal();
@@ -364,11 +370,15 @@ async function addToCart(productId, quantity) {
   }
   if (quantity === undefined) quantity = 1;
   
+  const body = itemType === 'service' 
+    ? { serviceId: itemId, quantity: quantity }
+    : { productId: itemId, quantity: quantity };
+  
   try {
     const response = await fetch('/cart/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId: productId, quantity: quantity })
+      body: JSON.stringify(body)
     });
     
     const data = await response.json();
@@ -394,17 +404,21 @@ function goToCheckout() {
 }
 
 // Update cart item quantity
-async function updateCartQuantity(productId, quantity, version) {
+async function updateCartQuantity(itemId, itemType, quantity, version) {
   if (quantity < 1) {
-    removeCartItem(productId);
+    removeCartItem(itemId, itemType);
     return;
   }
+  
+  const body = itemType === 'service'
+    ? { serviceId: itemId, quantity: quantity, version: version }
+    : { productId: itemId, quantity: quantity, version: version };
   
   try {
     const response = await fetch('/cart/update', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId: productId, quantity: quantity, version: version })
+      body: JSON.stringify(body)
     });
     
     const data = await response.json();
@@ -425,9 +439,9 @@ async function updateCartQuantity(productId, quantity, version) {
 }
 
 // Remove item from cart
-async function removeCartItem(productId) {
+async function removeCartItem(itemId, itemType = 'product') {
   try {
-    const response = await fetch('/cart/remove/' + productId, {
+    const response = await fetch('/cart/remove/' + itemId + '?type=' + itemType, {
       method: 'DELETE'
     });
     
@@ -476,23 +490,26 @@ document.addEventListener('click', function(e) {
   
   // Handle quantity buttons
   if (target.classList.contains('qty-minus')) {
-    const productId = parseInt(target.dataset.productId);
+    const itemId = parseInt(target.dataset.itemId);
+    const itemType = target.dataset.itemType;
     const currentQty = parseInt(target.dataset.quantity);
     const version = parseInt(target.dataset.version);
-    updateCartQuantity(productId, currentQty - 1, version);
+    updateCartQuantity(itemId, itemType, currentQty - 1, version);
   }
   
   if (target.classList.contains('qty-plus')) {
-    const productId = parseInt(target.dataset.productId);
+    const itemId = parseInt(target.dataset.itemId);
+    const itemType = target.dataset.itemType;
     const currentQty = parseInt(target.dataset.quantity);
     const version = parseInt(target.dataset.version);
-    updateCartQuantity(productId, currentQty + 1, version);
+    updateCartQuantity(itemId, itemType, currentQty + 1, version);
   }
   
   // Handle remove button
   if (target.classList.contains('cart-item-remove')) {
-    const productId = parseInt(target.dataset.productId);
-    removeCartItem(productId);
+    const itemId = parseInt(target.dataset.itemId);
+    const itemType = target.dataset.itemType;
+    removeCartItem(itemId, itemType);
   }
 });
 

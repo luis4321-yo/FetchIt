@@ -1,4 +1,5 @@
 const Product = require('../models/products');
+const Service = require('../models/services');
 const Cart = require('../models/cart');
 const { Order, OrderItem } = require('../models/order');
 const Promo = require('../models/promo');
@@ -80,6 +81,64 @@ const getProductDetails = async (req, res) => {
   }
 };
 
+const getAllServices = async (req, res) => {
+  try {
+    const serviceType = req.query.type;
+    const sessionId = getSessionId(req);
+    
+    let cartCount = 0;
+    try {
+      cartCount = await Cart.getItemCount(sessionId) || 0;
+    } catch (cartErr) {
+      console.error('Cart count error (non-fatal):', cartErr.message);
+    }
+
+    let services = await Service.findAll();
+
+    if (serviceType && serviceType !== 'all') {
+      services = services.filter(s => s.service_type === serviceType);
+    }
+
+    res.render('services', {
+      services: services,
+      pageTitle: 'Services',
+      path: '/services',
+      currentType: serviceType || 'all',
+      cartCount: cartCount,
+      accountId: req.session.accountId || null,
+      accountName: req.session.accountName || null
+    });
+
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+};
+
+const getServiceDetails = async (req, res) => {
+  try {
+    const serviceId = req.params.id;
+    const service = await Service.findById(serviceId);
+    const sessionId = getSessionId(req);
+    const cartCount = await Cart.getItemCount(sessionId);
+
+    if (!service) {
+      return res.status(404).send('Service not found');
+    }
+
+    res.render('service-details', {
+      service: service,
+      pageTitle: service.service_name,
+      path: '/services',
+      cartCount: cartCount,
+      accountId: req.session.accountId || null,
+      accountName: req.session.accountName || null
+    });
+
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+};
+
 // ==================== CART API ENDPOINTS ====================
 
 /**
@@ -104,29 +163,42 @@ const getCart = async (req, res) => {
 };
 
 /**
- * POST /cart/add - Add a product with quantity to cart
+ * POST /cart/add - Add a product or service with quantity to cart
  */
 const addToCart = async (req, res) => {
   try {
     const sessionId = getSessionId(req);
-    const { productId, quantity = 1 } = req.body;
+    const { productId, serviceId, quantity = 1 } = req.body;
 
-    if (!productId) {
-      return res.status(400).json({ success: false, message: 'Product ID is required' });
+    if (!productId && !serviceId) {
+      return res.status(400).json({ success: false, message: 'Product ID or Service ID is required' });
     }
 
-    // Verify product exists
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
+    let itemName, itemType;
+    if (productId) {
+      // Verify product exists
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ success: false, message: 'Product not found' });
+      }
+      itemName = product.name;
+      itemType = 'product';
+    } else {
+      // Verify service exists
+      const service = await Service.findById(serviceId);
+      if (!service) {
+        return res.status(404).json({ success: false, message: 'Service not found' });
+      }
+      itemName = service.service_name;
+      itemType = 'service';
     }
 
-    const result = await Cart.addToCart(sessionId, productId, parseInt(quantity));
+    const result = await Cart.addToCart(sessionId, productId || serviceId, parseInt(quantity), itemType);
     const cartCount = await Cart.getItemCount(sessionId);
 
     res.json({
       success: true,
-      message: `${product.name} added to cart`,
+      message: `${itemName} added to cart`,
       cartCount: cartCount,
       isNew: result.isNew
     });
@@ -142,18 +214,18 @@ const addToCart = async (req, res) => {
 const updateCartItem = async (req, res) => {
   try {
     const sessionId = getSessionId(req);
-    const { productId, quantity, version } = req.body;
+    const { productId, serviceId, quantity, version } = req.body;
 
-    if (!productId || quantity === undefined || version === undefined) {
+    if ((!productId && !serviceId) || quantity === undefined || version === undefined) {
       return res.status(400).json({
         success: false,
-        message: 'Product ID, quantity, and version are required'
+        message: 'Product ID or Service ID, quantity, and version are required'
       });
     }
 
     if (quantity < 1) {
       // Remove item if quantity is less than 1
-      const removed = await Cart.removeFromCart(sessionId, productId);
+      const removed = await Cart.removeFromCart(sessionId, productId, serviceId);
       const cartCount = await Cart.getItemCount(sessionId);
       return res.json({
         success: true,
@@ -163,7 +235,7 @@ const updateCartItem = async (req, res) => {
       });
     }
 
-    const result = await Cart.updateQuantity(sessionId, productId, parseInt(quantity), parseInt(version));
+    const result = await Cart.updateQuantity(sessionId, productId, serviceId, parseInt(quantity), parseInt(version));
 
     if (result === null) {
       return res.status(409).json({
@@ -190,18 +262,23 @@ const updateCartItem = async (req, res) => {
 };
 
 /**
- * DELETE /cart/remove/:productId - Remove item from cart
+ * DELETE /cart/remove/:itemId - Remove item from cart
+ * Query param: type=product|service
  */
 const removeFromCart = async (req, res) => {
   try {
     const sessionId = getSessionId(req);
-    const productId = req.params.productId;
+    const itemId = req.params.productId;
+    const itemType = req.query.type || 'product';
 
-    if (!productId) {
-      return res.status(400).json({ success: false, message: 'Product ID is required' });
+    if (!itemId) {
+      return res.status(400).json({ success: false, message: 'Item ID is required' });
     }
 
-    const removed = await Cart.removeFromCart(sessionId, productId);
+    const productId = itemType === 'product' ? itemId : null;
+    const serviceId = itemType === 'service' ? itemId : null;
+
+    const removed = await Cart.removeFromCart(sessionId, productId, serviceId);
     const cartCount = await Cart.getItemCount(sessionId);
     const summary = await Cart.getCartSummary(sessionId);
 
@@ -367,7 +444,7 @@ const postCheckoutProcess = async (req, res) => {
     }
 
     // Calculate subtotal
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.product_price * item.quantity), 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + ((item.item_price || item.product_price) * item.quantity), 0);
     const deliveryFee = deliveryMethod === 'delivery' ? DELIVERY_FEE : 0;
 
     // Apply promo code discount
@@ -431,9 +508,10 @@ const postCheckoutProcess = async (req, res) => {
     // Save order items
     for (const item of cartItems) {
       await Order.addItem(orderId, {
-        product_id: item.product_id,
-        product_name: item.product_name,
-        product_price: item.product_price,
+        product_id: item.product_id || null,
+        service_id: item.service_id || null,
+        product_name: item.item_name || item.product_name,
+        product_price: item.item_price || item.product_price,
         quantity: item.quantity
       });
     }
@@ -486,6 +564,8 @@ module.exports = {
   getIndex,
   getAllProducts,
   getProductDetails,
+  getAllServices,
+  getServiceDetails,
   getCart,
   addToCart,
   updateCartItem,

@@ -31,13 +31,13 @@
     </div>
   </nav>
 
-  <!-- PRODUCT -->
+  <!-- SERVICE -->
   <div class="product-page">
 
     <!-- LEFT: Image -->
     <div class="product-image-wrap">
-      <% if (product.image_url) { %>
-        <img src="<%= product.image_url %>" alt="<%= product.name %>" />
+      <% if (service.image_url) { %>
+        <img src="<%= service.image_url %>" alt="<%= service.service_name %>" />
       <% } else { %>
         <div class="comb-placeholder">
           <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,37 +57,47 @@
 
     <!-- RIGHT: Info -->
     <div class="product-info">
-      <h1 class="product-title"><%= product.name %></h1>
+      <h1 class="product-title"><%= service.service_name %></h1>
 
       <div class="stars">
-        <span class="star">★</span>
-        <span class="star">★</span>
-        <span class="star">★</span>
-        <span class="star">★</span>
-        <span class="star">★</span>
+        <% for (let i = 1; i <= 5; i++) { %>
+          <% if (i <= Math.floor(service.rating)) { %>
+            <span class="star filled">★</span>
+          <% } else if (i === Math.ceil(service.rating) && service.rating % 1 !== 0) { %>
+            <span class="star half">★</span>
+          <% } else { %>
+            <span class="star">☆</span>
+          <% } %>
+        <% } %>
+        <span style="margin-left: 8px; color: var(--muted); font-size: 0.9rem;">(<%= service.rating %>/5)</span>
       </div>
 
-      <div class="price">₱<%= product.price %></div>
+      <div class="price">₱<%= service.price %></div>
 
-      <% if (product.description) { %>
-        <p class="product-desc"><%= product.description %></p>
+      <% if (service.description) { %>
+        <p class="product-desc"><%= service.description %></p>
       <% } %>
 
       <div class="details">
         <div class="detail-row">
-          <span class="detail-label">Delivery Options:</span>
-          <span class="detail-value">Metro Manila~Quezon City, Quezon City, Project 6</span>
+          <span class="detail-label">Service Provider:</span>
+          <span class="detail-value"><%= service.person_name %></span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Date Guarantee:</span>
-          <div>
-            <a href="#" class="detail-link"><span class="gift-icon">🎁</span> February 16 – 23 ›</a>
-            <div class="detail-value muted" style="margin-top:4px;">Standard, with shipping fee ₱38.00</div>
-          </div>
+          <span class="detail-label">Service Type:</span>
+          <span class="detail-value"><%= service.service_type %></span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Return & Warranty:</span>
-          <a href="#" class="detail-link">Change of Mind · 7 Days Free Return · Warranty not available ›</a>
+          <span class="detail-label">Contact Number:</span>
+          <span class="detail-value"><%= service.contact_number %></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value"><%= service.email %></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Rating:</span>
+          <span class="detail-value"><%= service.rating %> out of 5</span>
         </div>
       </div>
 
@@ -101,7 +111,7 @@
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-buy" id="buy-now-btn">Buy NOW</button>
+        <button class="btn btn-buy" id="avail-now-btn">Avail Service</button>
         <button class="btn btn-cart" id="add-to-cart-btn">
           <span class="btn-icon">🛒</span> Add To Cart
         </button>
@@ -133,12 +143,12 @@
     
     // Add to cart button handler
     addToCartBtn.addEventListener('click', () => {
-      addToCart(<%= product.product_id %>, qty);
+      addToCart(<%= service.service_id %>, qty);
     });
     
-    // Buy Now button handler - adds to cart and redirects to checkout
-    document.getElementById('buy-now-btn').addEventListener('click', async () => {
-      const success = await addToCart(<%= product.product_id %>, qty);
+    // Avail Service button handler - adds to cart and redirects to checkout
+    document.getElementById('avail-now-btn').addEventListener('click', async () => {
+      const success = await addToCart(<%= service.service_id %>, qty);
       if (success) {
         window.location.href = '/checkout';
       }
