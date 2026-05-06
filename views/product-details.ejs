@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %> – FetchIT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/product-details.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">
+      <span class="logo-paw">🐾</span>
+      <span class="logo-text">FetchIT</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/products">Products</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="search-bar">
+      <input type="text" placeholder="Search in FetchIT" />
+      <button>🔍</button>
+    </div>
+    <div class="nav-cart" onclick="openCart()">
+      <span class="cart-icon">🛒</span>
+    </div>
+  </nav>
+
+  <!-- PRODUCT -->
+  <div class="product-page">
+
+    <!-- LEFT: Image -->
+    <div class="product-image-wrap">
+      <% if (product.image_url) { %>
+        <img src="<%= product.image_url %>" alt="<%= product.name %>" />
+      <% } else { %>
+        <div class="comb-placeholder">
+          <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="110" cy="130" rx="55" ry="35" fill="#c8a06e" stroke="#7a5c32" stroke-width="3"/>
+            <rect x="85" y="60" width="50" height="80" rx="8" fill="#d4a96a" stroke="#7a5c32" stroke-width="3"/>
+            <line x1="90" y1="120" x2="90" y2="160" stroke="#555" stroke-width="2.5"/>
+            <line x1="98" y1="120" x2="98" y2="162" stroke="#555" stroke-width="2.5"/>
+            <line x1="106" y1="120" x2="106" y2="163" stroke="#555" stroke-width="2.5"/>
+            <line x1="114" y1="120" x2="114" y2="163" stroke="#555" stroke-width="2.5"/>
+            <line x1="122" y1="120" x2="122" y2="162" stroke="#555" stroke-width="2.5"/>
+            <line x1="130" y1="120" x2="130" y2="160" stroke="#555" stroke-width="2.5"/>
+            <circle cx="110" cy="75" r="5" fill="#7a5c32"/>
+          </svg>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- RIGHT: Info -->
+    <div class="product-info">
+      <h1 class="product-title"><%= product.name %></h1>
+
+      <div class="stars">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+      </div>
+
+      <div class="price">₱<%= product.price %></div>
+
+      <% if (product.description) { %>
+        <p class="product-desc"><%= product.description %></p>
+      <% } %>
+
+      <div class="details">
+        <div class="detail-row">
+          <span class="detail-label">Delivery Options:</span>
+          <span class="detail-value">Metro Manila~Quezon City, Quezon City, Project 6</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Date Guarantee:</span>
+          <div>
+            <a href="#" class="detail-link"><span class="gift-icon">🎁</span> February 16 – 23 ›</a>
+            <div class="detail-value muted" style="margin-top:4px;">Standard, with shipping fee ₱38.00</div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Return & Warranty:</span>
+          <a href="#" class="detail-link">Change of Mind · 7 Days Free Return · Warranty not available ›</a>
+        </div>
+      </div>
+
+      <div class="quantity-row">
+        <span class="qty-label">Quantity:</span>
+        <div class="qty-box">
+          <button class="qty-btn" id="minus">−</button>
+          <span class="qty-num" id="qty">1</span>
+          <button class="qty-btn" id="plus">+</button>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-buy" id="buy-now-btn">Buy NOW</button>
+        <button class="btn btn-cart" id="add-to-cart-btn">
+          <span class="btn-icon">🛒</span> Add To Cart
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Include partials -->
+  <%- include('partials/cart-menu') %>
+  <%- include('partials/toast') %>
+
+  <script>
+    let qty = 1;
+    const display = document.getElementById('qty');
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    
+    document.getElementById('plus').addEventListener('click', () => { 
+      qty++; 
+      display.textContent = qty; 
+    });
+    
+    document.getElementById('minus').addEventListener('click', () => { 
+      if (qty > 1) { 
+        qty--; 
+        display.textContent = qty; 
+      } 
+    });
+    
+    // Add to cart button handler
+    addToCartBtn.addEventListener('click', () => {
+      addToCart(<%= product.product_id %>, qty);
+    });
+    
+    // Buy Now button handler - adds to cart and redirects to checkout
+    document.getElementById('buy-now-btn').addEventListener('click', async () => {
+      const success = await addToCart(<%= product.product_id %>, qty);
+      if (success) {
+        window.location.href = '/checkout';
+      }
+    });
+  </script>
+</body>
+</html>

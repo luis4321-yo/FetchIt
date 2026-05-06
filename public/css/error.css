@@ -1,0 +1,121 @@
+:root {
+  --amber: #F6BD60;
+  --cream: #F7EDE2;
+  --teal: #84A59D;
+  --teal-dark: #6b8e86;
+  --coral: #F28482;
+  --text: #1a1a1a;
+  --muted: #6F6B6B;
+  --border: #D1B9B9;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.4rem 3rem;
+  background: rgba(247, 237, 226, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--coral);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex; gap: 2.5rem; list-style: none;
+}
+
+.nav-links a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--coral); }
+
+/* ── ERROR ── */
+#error {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.container {
+  max-width: 600px;
+}
+
+#error h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 8rem;
+  font-weight: 700;
+  color: var(--coral);
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+#error h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: var(--teal);
+  margin-bottom: 1.5rem;
+}
+
+#error p {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.btn {
+  display: inline-block;
+  background: var(--teal);
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn:hover {
+  background: var(--teal-dark);
+  transform: translateY(-2px);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  #error { padding: 4rem 1.5rem; }
+  #error h1 { font-size: 6rem; }
+  #error h2 { font-size: 2rem; }
+}

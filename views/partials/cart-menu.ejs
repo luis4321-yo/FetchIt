@@ -1,0 +1,501 @@
+<!-- Cart Menu Partial -->
+<div id="cart-menu" class="cart-menu">
+  <div class="cart-header">
+    <h3>Shopping Cart</h3>
+    <button class="cart-close" onclick="toggleCart()">×</button>
+  </div>
+  
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty">
+      <span class="cart-empty-icon">🛒</span>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  
+  <div class="cart-footer" id="cart-footer" style="display: none;">
+    <div class="cart-summary">
+      <div class="cart-summary-row">
+        <span>Items:</span>
+        <span id="cart-total-items">0</span>
+      </div>
+      <div class="cart-summary-row cart-total">
+        <span>Total:</span>
+        <span id="cart-total-price">₱0.00</span>
+      </div>
+    </div>
+    <button class="btn btn-checkout" onclick="goToCheckout()">Checkout</button>
+    <button class="btn btn-clear-cart" onclick="clearCart()">Clear Cart</button>
+  </div>
+</div>
+
+<!-- Cart Badge (for nav icon) -->
+<div id="cart-badge" class="cart-badge" style="display: none;">
+  <span id="cart-badge-count">0</span>
+</div>
+
+<style>
+.cart-menu {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 380px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease;
+}
+
+.cart-menu.open {
+  right: 0;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-header h3 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.cart-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  line-height: 1;
+}
+
+.cart-close:hover {
+  color: #333;
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+}
+
+.cart-empty-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.cart-item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cart-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-item-placeholder {
+  font-size: 24px;
+}
+
+.cart-item-details {
+  flex: 1;
+  padding: 0 10px;
+}
+
+.cart-item-name {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.cart-item-price {
+  margin: 0 0 8px;
+  color: #2d8f4e;
+  font-weight: 600;
+}
+
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-item-quantity .qty-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-item-quantity .qty-btn:hover {
+  background: #f0f0f0;
+}
+
+.qty-value {
+  font-weight: 500;
+  min-width: 20px;
+  text-align: center;
+}
+
+.cart-item-remove {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.cart-item-remove:hover {
+  color: #e74c3c;
+}
+
+.cart-footer {
+  padding: 20px;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+}
+
+.cart-summary {
+  margin-bottom: 15px;
+}
+
+.cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.cart-total {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.btn-checkout {
+  width: 100%;
+  padding: 12px;
+  background: #2d8f4e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-checkout:hover {
+  background: #247742;
+}
+
+.btn-clear-cart {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-clear-cart:hover {
+  background: #fff5f5;
+}
+
+.cart-badge {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #e74c3c;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 999;
+  cursor: pointer;
+}
+</style>
+
+<script>
+// Toggle cart menu open/close
+function toggleCart() {
+  const cartMenu = document.getElementById('cart-menu');
+  cartMenu.classList.toggle('open');
+}
+
+// Open cart menu
+function openCart() {
+  const cartMenu = document.getElementById('cart-menu');
+  cartMenu.classList.add('open');
+}
+
+// Fetch and render cart contents
+async function fetchCart() {
+  try {
+    const response = await fetch('/cart');
+    const data = await response.json();
+    
+    if (data.success) {
+      updateCartUI(data);
+    }
+  } catch (err) {
+    console.error('Error fetching cart:', err);
+  }
+}
+
+// Update cart UI with fresh data
+function updateCartUI(data) {
+  const cartItems = document.getElementById('cart-items');
+  const cartBadge = document.getElementById('cart-badge');
+  const cartBadgeCount = document.getElementById('cart-badge-count');
+  const cartFooter = document.getElementById('cart-footer');
+  const cartTotalItems = document.getElementById('cart-total-items');
+  const cartTotalPrice = document.getElementById('cart-total-price');
+  
+  // Update badge
+  if (data.cartCount > 0) {
+    cartBadgeCount.textContent = data.cartCount;
+    cartBadge.style.display = 'flex';
+  } else {
+    cartBadge.style.display = 'none';
+  }
+  
+  // Update cart items HTML
+  if (data.items && data.items.length > 0) {
+    let itemsHTML = '';
+    data.items.forEach(item => {
+      itemsHTML += `
+        <div class="cart-item" data-product-id="${item.product_id}" data-version="${item.version}">
+          <div class="cart-item-image">
+            ${item.product_image 
+              ? `<img src="${item.product_image}" alt="${item.product_name}" />`
+              : '<div class="cart-item-placeholder">🐾</div>'
+            }
+          </div>
+          <div class="cart-item-details">
+            <h4 class="cart-item-name">${item.product_name}</h4>
+            <p class="cart-item-price">₱${item.product_price}</p>
+            <div class="cart-item-quantity">
+              <button class="qty-btn qty-minus" data-action="decrease" data-product-id="${item.product_id}" data-quantity="${item.quantity}" data-version="${item.version}">−</button>
+              <span class="qty-value">${item.quantity}</span>
+              <button class="qty-btn qty-plus" data-action="increase" data-product-id="${item.product_id}" data-quantity="${item.quantity}" data-version="${item.version}">+</button>
+            </div>
+          </div>
+          <button class="cart-item-remove" data-action="remove" data-product-id="${item.product_id}">×</button>
+        </div>
+      `;
+    });
+    cartItems.innerHTML = itemsHTML;
+    cartFooter.style.display = 'block';
+    
+    // Update totals
+    if (cartTotalItems) cartTotalItems.textContent = data.totalItems;
+    if (cartTotalPrice) cartTotalPrice.textContent = `₱${data.totalPrice.toFixed(2)}`;
+  } else {
+    cartItems.innerHTML = `
+      <div class="cart-empty">
+        <span class="cart-empty-icon">🛒</span>
+        <p>Your cart is empty</p>
+      </div>
+    `;
+    cartFooter.style.display = 'none';
+  }
+}
+
+// Add item to cart
+async function addToCart(productId, quantity) {
+  // Gate: require login before adding to cart
+  if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
+    if (typeof openSigninModal === 'function') openSigninModal();
+    return false;
+  }
+  if (quantity === undefined) quantity = 1;
+  
+  try {
+    const response = await fetch('/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: productId, quantity: quantity })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showNotification(data.message, 'success');
+      fetchCart();
+      return true;
+    } else {
+      showNotification(data.message, 'error');
+      return false;
+    }
+  } catch (err) {
+    console.error('Error adding to cart:', err);
+    showNotification('Failed to add item to cart', 'error');
+    return false;
+  }
+}
+
+// Go to checkout page
+function goToCheckout() {
+  window.location.href = '/checkout';
+}
+
+// Update cart item quantity
+async function updateCartQuantity(productId, quantity, version) {
+  if (quantity < 1) {
+    removeCartItem(productId);
+    return;
+  }
+  
+  try {
+    const response = await fetch('/cart/update', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: productId, quantity: quantity, version: version })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showNotification('Cart updated', 'success');
+      fetchCart();
+    } else if (data.conflict) {
+      showNotification(data.message, 'error');
+      fetchCart(); // Refresh to get latest state
+    } else {
+      showNotification(data.message, 'error');
+    }
+  } catch (err) {
+    console.error('Error updating cart:', err);
+    showNotification('Failed to update cart', 'error');
+  }
+}
+
+// Remove item from cart
+async function removeCartItem(productId) {
+  try {
+    const response = await fetch('/cart/remove/' + productId, {
+      method: 'DELETE'
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showNotification('Item removed from cart', 'success');
+      fetchCart();
+    } else {
+      showNotification(data.message, 'error');
+    }
+  } catch (err) {
+    console.error('Error removing from cart:', err);
+    showNotification('Failed to remove item', 'error');
+  }
+}
+
+// Clear entire cart
+async function clearCart() {
+  if (!confirm('Are you sure you want to clear your cart?')) {
+    return;
+  }
+  
+  try {
+    const response = await fetch('/cart/clear', {
+      method: 'DELETE'
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showNotification('Cart cleared', 'success');
+      fetchCart();
+    } else {
+      showNotification(data.message, 'error');
+    }
+  } catch (err) {
+    console.error('Error clearing cart:', err);
+    showNotification('Failed to clear cart', 'error');
+  }
+}
+
+// Event delegation for cart item buttons
+document.addEventListener('click', function(e) {
+  const target = e.target;
+  
+  // Handle quantity buttons
+  if (target.classList.contains('qty-minus')) {
+    const productId = parseInt(target.dataset.productId);
+    const currentQty = parseInt(target.dataset.quantity);
+    const version = parseInt(target.dataset.version);
+    updateCartQuantity(productId, currentQty - 1, version);
+  }
+  
+  if (target.classList.contains('qty-plus')) {
+    const productId = parseInt(target.dataset.productId);
+    const currentQty = parseInt(target.dataset.quantity);
+    const version = parseInt(target.dataset.version);
+    updateCartQuantity(productId, currentQty + 1, version);
+  }
+  
+  // Handle remove button
+  if (target.classList.contains('cart-item-remove')) {
+    const productId = parseInt(target.dataset.productId);
+    removeCartItem(productId);
+  }
+});
+
+// Poll for cart updates every 5 seconds
+setInterval(fetchCart, 5000);
+</script>

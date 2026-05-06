@@ -1,0 +1,396 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --amber: #F6BD60;
+  --cream: #F7EDE2;
+  --teal: #84A59D;
+  --teal-dark: #6b8e86;
+  --coral: #F28482;
+  --text: #1a1a1a;
+  --muted: #6F6B6B;
+  --border: #D1B9B9;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.4rem 3rem;
+  background: rgba(247, 237, 226, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--coral);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex; gap: 2rem; list-style: none; align-items: center;
+}
+
+.nav-links a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--coral); }
+
+.nav-cta {
+  background: var(--teal);
+  color: #fff !important;
+  padding: 0.5rem 1.3rem;
+  border-radius: 2px;
+}
+
+.nav-cta:hover { background: var(--teal-dark) !important; }
+
+.nav-user {
+  display: flex; gap: 1rem; align-items: center;
+}
+
+.nav-user span {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── PAGE WRAPPER ── */
+.account-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7rem 2rem 4rem;
+}
+
+/* ── CARD ── */
+.account-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  animation: fadeUp 0.5s ease forwards;
+}
+
+.account-card.wide {
+  max-width: 680px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.account-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--teal);
+  margin-bottom: 0.4rem;
+}
+
+.account-card-subtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+}
+
+/* ── ALERT MESSAGES ── */
+.alert {
+  padding: 0.85rem 1.2rem;
+  border-radius: 3px;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert-error {
+  background: #fdecea;
+  color: #922;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+/* ── FORM ── */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.form-label .required {
+  color: var(--coral);
+  margin-left: 2px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(132, 165, 157, 0.15);
+}
+
+.form-input:disabled {
+  background: #eee;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.form-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ── SECTION DIVIDER ── */
+.form-section {
+  margin: 1.8rem 0 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.form-section-title {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 1.1rem;
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  margin-top: 0.5rem;
+}
+
+.btn-primary:hover {
+  background: var(--teal-dark);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  color: #c0392b;
+  border: 1px solid #c0392b;
+  border-radius: 2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+
+.btn-danger:hover {
+  background: #fdecea;
+}
+
+/* ── FOOTER LINKS ── */
+.account-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.account-footer a {
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.account-footer a:hover {
+  border-color: var(--teal);
+}
+
+/* ── DANGER ZONE ── */
+.danger-zone {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f5c6cb;
+}
+
+.danger-zone-title {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #c0392b;
+  margin-bottom: 0.6rem;
+}
+
+.danger-zone p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+/* ── SIGN-IN GATE MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 4px;
+  padding: 2.5rem;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  animation: fadeUp 0.3s ease;
+}
+
+.modal-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--teal);
+  margin-bottom: 0.5rem;
+}
+
+.modal-body {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.modal-body a {
+  color: var(--teal);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.modal-btn-primary {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+}
+
+.modal-btn-primary:hover {
+  background: var(--teal-dark);
+  transform: translateY(-1px);
+}
+
+.modal-btn-secondary {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.modal-btn-secondary:hover {
+  background: var(--cream);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .account-card { padding: 2rem 1.5rem; }
+  .form-row { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %> – FetchIT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/accounts.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">🐾 FetchIT</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/products">Products</a></li>
+    <li>
+      <div class="nav-user">
+        <span>Hi, <%= account.name.split(' ')[0] %> 👋</span>
+        <form method="POST" action="/logout" style="display:inline;">
+          <button type="submit" style="background:none;border:none;cursor:pointer;font-size:0.85rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Sans',sans-serif;">Sign Out</button>
+        </form>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<div class="account-page" style="align-items: flex-start; padding-top: 6rem;">
+  <div class="account-card wide">
+    <h1 class="account-card-title">My Account</h1>
+    <p class="account-card-subtitle">Manage your contact details, address, and password. Your email cannot be changed.</p>
+
+    <!-- Loyalty Points Banner -->
+    <div style="background: linear-gradient(135deg, #84A59D, #6b8e86); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <p style="font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; opacity:0.85; margin-bottom:0.2rem;">🐾 FetchIT Loyalty Points</p>
+        <p style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; line-height:1;"><%= loyaltyBalance %> <span style="font-size:1rem; font-weight:400;">pts</span></p>
+      </div>
+      <div style="text-align:right;">
+        <p style="font-size:0.8rem; opacity:0.85;">Redeemable value</p>
+        <p style="font-size:1.3rem; font-weight:600;">₱<%= loyaltyValue.toFixed(2) %></p>
+        <p style="font-size:0.72rem; opacity:0.75; margin-top:0.2rem;">100 pts = ₱10 off at checkout</p>
+      </div>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <form method="POST" action="/account">
+
+      <!-- Read-only info -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" value="<%= account.name %>" disabled />
+          <p class="form-hint">Name cannot be changed after signup.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" value="<%= account.email %>" disabled />
+          <p class="form-hint">Email cannot be changed.</p>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="form-section">
+        <p class="form-section-title">Contact Information</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contact_number">Phone Number</label>
+        <input class="form-input" type="tel" id="contact_number" name="contact_number" value="<%= account.contact_number || '' %>" placeholder="09XXXXXXXXX" />
+      </div>
+
+      <!-- Address -->
+      <div class="form-section">
+        <p class="form-section-title">Delivery Address</p>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="street_number">Street / Unit No.</label>
+          <input class="form-input" type="text" id="street_number" name="street_number" value="<%= account.street_number || '' %>" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="city">City</label>
+          <input class="form-input" type="text" id="city" name="city" value="<%= account.city || '' %>" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="district">District / Barangay</label>
+          <input class="form-input" type="text" id="district" name="district" value="<%= account.district || '' %>" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="province">Province</label>
+          <input class="form-input" type="text" id="province" name="province" value="<%= account.province || '' %>" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="postal_code">Postal Code</label>
+        <input class="form-input" type="text" id="postal_code" name="postal_code" value="<%= account.postal_code || '' %>" placeholder="e.g. 1630" />
+      </div>
+
+      <!-- Change Password -->
+      <div class="form-section">
+        <p class="form-section-title">Change Password <span style="font-weight:300;font-style:italic;">(leave blank to keep current)</span></p>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="password">New Password</label>
+          <input class="form-input" type="password" id="password" name="password" placeholder="Min. 6 characters" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm New Password</label>
+          <input class="form-input" type="password" id="confirmPassword" name="confirmPassword" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">Save Changes</button>
+    </form>
+
+    <!-- Danger Zone -->
+    <div class="danger-zone">
+      <p class="danger-zone-title">⚠ Danger Zone</p>
+      <p>Deleting your account is permanent and cannot be undone. All your data will be removed.</p>
+      <form method="POST" action="/account/delete" onsubmit="return confirm('Are you sure you want to permanently delete your account? This cannot be undone.');">
+        <button type="submit" class="btn-danger">Delete My Account</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

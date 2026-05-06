@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --amber: #F6BD60;
+      --cream: #F7EDE2;
+      --teal: #84A59D;
+      --teal-dark: #6b8e86;
+      --coral: #F28482;
+      --text: #1a1a1a;
+      --muted: #6F6B6B;
+      --border: #D1B9B9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 3rem;
+      background: rgba(247, 237, 226, 0.92);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--coral);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--coral); }
+
+    .nav-cta {
+      background: var(--teal);
+      color: #fff !important;
+      padding: 0.5rem 1.3rem;
+      border-radius: 2px;
+    }
+
+    .nav-cta:hover { background: var(--teal-dark); color: #fff !important; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      background: var(--teal);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-text {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8rem 4rem 6rem 5rem;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-size: 0.75rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--amber);
+      margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5vw, 5rem);
+      line-height: 1.1;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+    }
+
+    .hero-title em { color: var(--amber); font-style: italic; }
+
+    .hero-desc {
+      font-size: 1rem; line-height: 1.7;
+      color: var(--muted);
+      max-width: 380px;
+      margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-actions {
+      display: flex; gap: 1rem; align-items: center;
+      opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      color: #fff;
+      padding: 0.85rem 2rem;
+      border: none; border-radius: 2px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover { background: var(--coral); transform: translateY(-2px); }
+
+    .btn-secondary {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--muted);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-secondary:hover { color: var(--amber); border-color: var(--amber); }
+
+    .hero-visual {
+      position: relative; overflow: hidden;
+      opacity: 0; animation: fadeIn 1.2s 0.3s forwards;
+    }
+
+    .hero-visual::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--teal) 0%, transparent 40%);
+      z-index: 1;
+    }
+
+    .hero-visual img,
+    .hero-visual .pet-placeholder {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .pet-placeholder {
+      background: linear-gradient(135deg, #6b8e86 0%, #84A59D 40%, #F6BD60 70%, #F28482 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .pet-art {
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, var(--coral), var(--teal) 60%, var(--teal-dark));
+      box-shadow: 0 0 80px rgba(242, 132, 130, 0.3), inset 0 0 40px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .pet-art::after {
+      content: '🐾';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 120px;
+    }
+
+    .hero-badge {
+      position: absolute; bottom: 3rem; right: 3rem; z-index: 3;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: var(--amber);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      animation: spin-slow 20s linear infinite;
+    }
+
+    .hero-badge span {
+      font-size: 0.6rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: #fff;
+      font-weight: 500; line-height: 1.4;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .hero-text { padding: 7rem 2rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">🐾 FetchIT</a>
+  <ul class="nav-links">
+    <li><a href="#products">Products</a></li>
+    <% if (accountId) { %>
+      <li><a href="/account">My Account</a></li>
+      <li>
+        <form method="POST" action="/logout" style="display:inline;">
+          <button type="submit" style="background:none;border:none;cursor:pointer;font-size:0.85rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);font-family:'DM Sans',sans-serif;">Sign Out</button>
+        </form>
+      </li>
+    <% } else { %>
+      <li><a href="/login">Sign In</a></li>
+      <li><a href="/signup" class="nav-cta">Sign Up</a></li>
+    <% } %>
+    <li><a href="/products" class="nav-cta">Fetch Products</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-text">
+    <p class="hero-tag">Premium · Handpicked · Delivered Fresh</p>
+    <h1 class="hero-title">
+      Pet products worth<br>
+      <em>fetching</em><br>
+      for.
+    </h1>
+    <p class="hero-desc">
+      We source high-quality products from trusted suppliers across the globe — then deliver them fresh to bring joy to your furry friends.
+    </p>
+    <div class="hero-actions">
+      <a href="/products" class="btn-primary">Fetch Products</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="pet-placeholder">
+      <div class="pet-art"></div>
+    </div>
+    <div class="hero-badge">
+      <span>Est.<br>2023<br>★★★★★</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

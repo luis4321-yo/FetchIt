@@ -1,0 +1,35 @@
+{
+  "name": "fetchit",
+  "version": "1.0.0",
+  "description": "To run the project, open the terminal in the project directory and initialize Node.js by running:",
+  "homepage": "https://github.com/Hirokizante/FetchIt#readme",
+  "bugs": {
+    "url": "https://github.com/Hirokizante/FetchIt/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hirokizante/FetchIt.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "ejs": "^5.0.2",
+    "express": "^5.2.1",
+    "express-handlebars": "^8.0.7",
+    "express-session": "^1.19.0",
+    "mysql2": "^3.22.3",
+    "pug": "^3.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "keywords": []
+}

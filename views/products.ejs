@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/products.css" />
+  <link rel="stylesheet" href="/css/accounts.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">🐾 FetchIT</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/products">Products</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <% if (accountId) { %>
+      <li><a href="/account">My Account</a></li>
+      <li>
+        <form method="POST" action="/logout" style="display:inline;">
+          <button type="submit" style="background:none;border:none;cursor:pointer;font-size:0.85rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);font-family:'DM Sans',sans-serif;">Sign Out</button>
+        </form>
+      </li>
+    <% } else { %>
+      <li><a href="/login">Sign In</a></li>
+      <li><a href="/signup" class="nav-cta">Sign Up</a></li>
+    <% } %>
+  </ul>
+  <div class="nav-cart" onclick="openCart()">
+    <span class="nav-cart-icon">🛒</span>
+  </div>
+</nav>
+
+<!-- Sign-In Gate Modal -->
+<div id="signin-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-icon">🔒</div>
+    <h2 class="modal-title">Sign In Required</h2>
+    <p class="modal-body">
+      You must sign in first to buy.<br>
+      <a href="/signup">Don't have an account? Sign up here.</a>
+    </p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-secondary" onclick="closeSigninModal()">Maybe Later</button>
+      <a href="/login" class="modal-btn modal-btn-primary">Sign In</a>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="container">
+    <h1><%= pageTitle %></h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search products..." />
+    </div>
+    <div class="filters">
+      <button class="filter-btn <%= currentCategory === 'all' ? 'active' : '' %>" onclick="filterCategory('all')">All</button>
+      <button class="filter-btn <%= currentCategory === 'Food' ? 'active' : '' %>" onclick="filterCategory('food')">Food</button>
+      <button class="filter-btn <%= currentCategory === 'Toys' ? 'active' : '' %>" onclick="filterCategory('toys')">Toys</button>
+      <button class="filter-btn <%= currentCategory === 'Accessories' ? 'active' : '' %>" onclick="filterCategory('accessories')">Accessories</button>
+      <button class="filter-btn <%= currentCategory === 'Hygiene' ? 'active' : '' %>" onclick="filterCategory('hygiene')">Hygiene</button>
+      <button class="filter-btn <%= currentCategory === 'Medicine' ? 'active' : '' %>" onclick="filterCategory('medicine')">Medicine</button>
+    </div>
+    <div class="products-grid">
+      <% products.forEach(product => { %>
+        <div class="product-card">
+          <div class="product-img">
+            <% if (product.image_url) { %>
+              <img src="<%= product.image_url %>" alt="<%= product.name %>" />
+            <% } else { %>
+              <div class="placeholder">🐾</div>
+            <% } %>
+          </div>
+          <div class="product-body">
+            <h3 class="product-name"><%= product.name %></h3>
+            <p class="product-desc"><%= product.description %></p>
+            <div class="product-footer">
+              <div class="product-price">$<%= product.price %></div>
+              <div class="product-actions">
+                <button class="btn btn-view" onclick="viewProduct(<%= product.product_id %>)">View</button>
+                <button class="btn btn-cart" onclick="addToCart(<%= product.product_id %>, 1)">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<!-- Include partials -->
+<%- include('partials/cart-menu') %>
+<%- include('partials/toast') %>
+
+<script>
+  // Passed from server — tells JS whether user is signed in
+  const isLoggedIn = <%= accountId ? 'true' : 'false' %>;
+
+  const searchInput = document.getElementById('searchInput');
+  const productCards = document.querySelectorAll('.product-card');
+
+  searchInput.addEventListener('input', () => {
+    const term = searchInput.value.toLowerCase();
+    productCards.forEach(card => {
+      const name = card.querySelector('.product-name').innerText.toLowerCase();
+      card.style.display = name.includes(term) ? 'block' : 'none';
+    });
+  });
+
+  function viewProduct(productId) {
+    window.location.href = '/products/' + productId;
+  }
+
+  function filterCategory(category) {
+    if (category === 'all') {
+      window.location.href = '/products';
+    } else {
+      window.location.href = '/products?category=' + category;
+    }
+  }
+
+  // Sign-in gate modal
+  function openSigninModal() {
+    document.getElementById('signin-modal').classList.add('active');
+  }
+
+  function closeSigninModal() {
+    document.getElementById('signin-modal').classList.remove('active');
+  }
+
+  // Close modal on overlay click
+  document.getElementById('signin-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeSigninModal();
+  });
+
+
+</script>
+
+</body>
+</html>
